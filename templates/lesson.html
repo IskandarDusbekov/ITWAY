@@ -1,0 +1,1131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* ASOSIY STILLAR */
+    :root {
+        --primary-dark: #0f172a;
+        --secondary-dark: #1e293b;
+        --accent-color: #3b82f6;
+        --accent-hover: #2563eb;
+        --text-light: #f8fafc;
+        --text-muted: #94a3b8;
+        --card-bg: rgba(30, 41, 59, 0.5);
+    }
+
+    /* ANIMATSIYALAR */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(30px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    @keyframes gradient {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @keyframes progressFill {
+        from { width: 0; }
+    }
+
+    /* ANIMATSIYA KLASSLARI */
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .animate-slideInRight {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-progressFill {
+        animation: progressFill 1s ease-out;
+    }
+
+    .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 3s ease infinite;
+    }
+
+    /* DARSA MAXSUS STILLAR */
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #000;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 20px;
+    }
+
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 30%);
+        border-radius: 20px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+    }
+
+    .video-container:hover .video-overlay {
+        opacity: 1;
+    }
+
+    /* KOD BLOKLARI */
+    .code-block {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        border-left: 4px solid var(--accent-color);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .code-block::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: linear-gradient(to right, #2d3748, transparent);
+        border-radius: 12px 12px 0 0;
+    }
+
+    .code-block pre {
+        margin: 0;
+        padding: 2rem 1rem 1rem;
+        overflow-x: auto;
+        position: relative;
+    }
+
+    .code-block code {
+        display: block;
+        line-height: 1.6;
+        font-size: 0.9rem;
+    }
+
+    /* DARS TARAF BO'YI (SIDEBAR) */
+    .lesson-sidebar {
+        position: sticky;
+        top: 100px;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-color) transparent;
+    }
+
+    .lesson-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .lesson-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .lesson-sidebar::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, var(--accent-color), #8b5cf6);
+        border-radius: 3px;
+    }
+
+    .lesson-item {
+        transition: all 0.3s ease;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 6px;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .lesson-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .lesson-item:hover::before {
+        left: 100%;
+    }
+
+    .lesson-item:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateX(5px);
+    }
+
+    .lesson-item.active {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+        border-left: 4px solid var(--accent-color);
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+    }
+
+    /* PROGRESS BARLAR */
+    .progress-bar-container {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+        border-radius: 20px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 6px;
+        background: linear-gradient(90deg,
+            var(--accent-color),
+            #8b5cf6,
+            #ec4899);
+        background-size: 200% 100%;
+        animation: gradient 3s ease infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    /* DARS STATISTIKALARI */
+    .lesson-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+    }
+
+    .stat-card i {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* YUKLASH TUGMALARI */
+    .download-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .download-card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+    }
+
+    .download-progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .download-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-color), #8b5cf6);
+        width: 0;
+        transition: width 1s ease;
+    }
+
+    /* NAVIGATSIYA TUGMALARI */
+    .nav-buttons {
+        display: flex;
+        gap: 16px;
+        margin-top: 40px;
+    }
+
+    .nav-btn {
+        flex: 1;
+        padding: 18px 32px;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .nav-btn:hover::before {
+        left: 100%;
+    }
+
+    .nav-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover i {
+        transform: scale(1.2);
+    }
+
+    /* LOADING EKRANI */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    }
+
+    .loading-spinner {
+        width: 80px;
+        height: 80px;
+        position: relative;
+    }
+
+    .loading-spinner div {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 8px solid transparent;
+        border-radius: 50%;
+        animation: loadingRotate 1.5s linear infinite;
+    }
+
+    .loading-spinner div:nth-child(1) {
+        border-top-color: var(--accent-color);
+        animation-delay: 0s;
+    }
+
+    .loading-spinner div:nth-child(2) {
+        border-right-color: #8b5cf6;
+        animation-delay: 0.1s;
+    }
+
+    .loading-spinner div:nth-child(3) {
+        border-bottom-color: #ec4899;
+        animation-delay: 0.2s;
+    }
+
+    @keyframes loadingRotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* RESPONSIVE DIZAYN */
+    @media (max-width: 768px) {
+        .lesson-sidebar {
+            position: static;
+            max-height: none;
+        }
+
+        .nav-buttons {
+            flex-direction: column;
+        }
+
+        .nav-btn {
+            width: 100%;
+        }
+
+        .lesson-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- LOADING EKRANI -->
+<div id="loadingScreen" class="loading-overlay animate-fadeIn">
+    <div class="loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<!-- ASOSIY KONTENT -->
+<main class="container mx-auto px-4 lg:px-8 py-8 animate-fadeIn">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- DARS KONTENTI -->
+        <div class="lg:w-3/4">
+            <!-- Dars Sarlavhasi -->
+            <div class="mb-8 animate-fadeInUp">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb flex items-center text-sm mb-4">
+                    <a href="{% url 'index' %}"
+                       class="text-blue-400 hover:text-blue-300 transition-all duration-200 flex items-center group">
+                        <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform"></i>
+                        Bosh sahifa
+                    </a>
+                    <i class="fas fa-chevron-right mx-3 text-xs text-slate-500 animate-pulse"></i>
+                    <a href="#"
+                       class="text-blue-400 hover:text-blue-300 transition-all duration-200 group">
+                        {{ lesson.modul.name }}
+                    </a>
+                    <i class="fas fa-chevron-right mx-3 text-xs text-slate-500 animate-pulse"></i>
+                    <span class="text-white font-medium bg-gradient-to-r from-blue-600/20 to-purple-600/20
+                                  px-4 py-2 rounded-full animate-fadeIn">
+                        {{ lesson.id }}. {{ lesson.title }}
+                    </span>
+                </div>
+
+                <!-- Asosiy Sarlavha -->
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-blue-300 to-purple-300
+                           bg-clip-text text-transparent animate-slideInRight">
+                    {{ lesson.title }}
+                </h1>
+
+                <!-- Dars Statistikalari -->
+                <div class="lesson-stats animate-fadeInUp">
+                    <div class="stat-card">
+                        <i class="far fa-clock animate-pulse"></i>
+                        <div class="text-2xl font-bold text-yellow-400 mb-1">{{ lesson.time }} daqiqa</div>
+                        <p class="text-sm text-slate-300">Dars davomiyligi</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <i class="far fa-calendar-alt animate-bounce"></i>
+                        <div class="text-2xl font-bold text-blue-400 mb-1">{{ lesson.created|date:"d.m.Y" }}</div>
+                        <p class="text-sm text-slate-300">Sana</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line animate-float"></i>
+                        <div class="text-2xl font-bold text-green-400 mb-1">
+                            {% if user in lesson.completed_by.all %}100%{% else %}0%{% endif %}
+                        </div>
+                        <p class="text-sm text-slate-300">Progress</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <i class="fas fa-eye animate-pulse"></i>
+                        <div class="text-2xl font-bold text-purple-400 mb-1">{{ lesson.views|default:"0" }}</div>
+                        <p class="text-sm text-slate-300">Ko'rishlar</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Pleer -->
+            <div class="course-card p-0 overflow-hidden mb-8 border-0 animate-fadeInUp">
+                <div class="video-container">
+                    <iframe width="1013" height="570"
+                            src="https://www.youtube.com/embed/{{ lesson.video_id }}"
+                            title="{{ lesson.title }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                    <div class="video-overlay"></div>
+                </div>
+
+                <div class="p-6 bg-gradient-to-r from-slate-800/80 to-slate-900/80">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-300 font-medium">{{ lesson.modul.name }}</span>
+                        <button id="likeBtn" class="like-btn text-slate-400 hover:text-red-500 transition-all duration-300
+                                                     transform hover:scale-110">
+                            <i class="far fa-heart text-xl"></i>
+                            <span class="ml-2 font-medium">{{ lesson.likes|default:"0" }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dars Tavsifi -->
+            <div class="course-card p-8 mb-8 animate-fadeInUp">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20
+                                flex items-center justify-center mr-4 animate-pulse">
+                        <i class="fas fa-info-circle text-xl text-blue-400"></i>
+                    </div>
+                    Dars haqida
+                </h2>
+                <div class="prose prose-invert max-w-none">
+                    <div class="text-slate-300 leading-relaxed animate-fadeIn">
+                        {{ lesson.about|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kod Misollari -->
+            <div class="course-card p-8 mb-8 animate-fadeInUp">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20
+                                flex items-center justify-center mr-4 animate-pulse">
+                        <i class="fas fa-code text-xl text-green-400"></i>
+                    </div>
+                    Kod Misollari
+                </h2>
+
+                <div class="mb-6">
+                    <div class="text-slate-300 leading-relaxed animate-fadeIn">
+                        {{ lesson.lesson_text|safe }}
+                    </div>
+                </div>
+
+                <!-- Kod Bloklari -->
+                <div class="code-block mb-4">
+                    <pre><code class="language-python">
+# Python kod misoli
+def hello_world():
+    """Bu funksiya salom beradi"""
+    print("Salom, Python!")
+    return "Muvaffaqiyatli"
+
+# Funksiyani chaqirish
+result = hello_world()
+print(f"Natija: {result}")
+                    </code></pre>
+                </div>
+            </div>
+
+            <!-- Materiallar -->
+            <div class="course-card p-8 mb-8 animate-fadeInUp">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/20
+                                flex items-center justify-center mr-4 animate-pulse">
+                        <i class="fas fa-download text-xl text-yellow-400"></i>
+                    </div>
+                    Yuklab olish materiallari
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="download-card">
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/30
+                                        flex items-center justify-center mr-4 group hover:scale-110 transition-transform">
+                                <i class="fas fa-file-pdf text-2xl text-blue-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-lg mb-1">Uyga vazifa uchun masalalar</h4>
+                                <p class="text-sm text-slate-400">PDF • 2.4 MB</p>
+                                <div class="download-progress">
+                                    <div class="download-progress-bar" data-progress="75"></div>
+                                </div>
+                            </div>
+                            <button class="download-btn px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700
+                                           rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all
+                                           duration-300 transform hover:scale-105">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="download-card">
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/30 to-green-600/30
+                                        flex items-center justify-center mr-4 group hover:scale-110 transition-transform">
+                                <i class="fas fa-file-code text-2xl text-green-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-lg mb-1">Dars kodlari</h4>
+                                <p class="text-sm text-slate-400">ZIP • 1.2 MB</p>
+                                <div class="download-progress">
+                                    <div class="download-progress-bar" data-progress="40"></div>
+                                </div>
+                            </div>
+                            <button class="download-btn px-4 py-2 bg-gradient-to-r from-green-600 to-green-700
+                                           rounded-lg hover:from-green-500 hover:to-green-600 transition-all
+                                           duration-300 transform hover:scale-105">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigatsiya Tugmalari -->
+            <div class="nav-buttons animate-fadeInUp">
+                <a href="{{ previous_lesson_url }}"
+                   class="nav-btn bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700
+                          text-slate-300 border border-slate-600">
+                    <i class="fas fa-arrow-left mr-3"></i>
+                    Oldingi dars
+                </a>
+
+                <div class="flex gap-3">
+                    <form action="{% url 'lesson' lesson.id %}" method="post" class="w-full">
+                        {% csrf_token %}
+                        {% if user in lesson.completed_by.all %}
+                            <button type="submit"
+                                    class="nav-btn bg-gradient-to-r from-green-600 to-green-700
+                                           hover:from-green-500 hover:to-green-600 text-white w-full">
+                                <i class="fas fa-check-circle mr-3"></i>
+                                Yakunlandi
+                            </button>
+                        {% else %}
+                            <button type="submit"
+                                    class="nav-btn bg-gradient-to-r from-orange-600 to-orange-700
+                                           hover:from-orange-500 hover:to-orange-600 text-white w-full animate-pulse">
+                                <i class="fas fa-check-circle mr-3"></i>
+                                Yakunlash
+                            </button>
+                        {% endif %}
+                    </form>
+
+                    <a href="{{ next_lesson_url }}"
+                       class="nav-btn bg-gradient-to-r from-blue-600 to-purple-600
+                              hover:from-blue-500 hover:to-purple-500 text-white">
+                        Keyingi dars
+                        <i class="fas fa-arrow-right ml-3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="lg:w-1/4">
+            <!-- Dars Navigatsiyasi -->
+            <div class="course-card p-6 mb-6 lesson-sidebar">
+                <h3 class="text-xl font-bold mb-6 flex items-center pb-4 border-b border-slate-700/50">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20
+                                flex items-center justify-center mr-3">
+                        <i class="fas fa-list-ol text-blue-400"></i>
+                    </div>
+                    {{ lesson.modul.name }}
+                </h3>
+
+                <div class="space-y-2 mb-6">
+                    {% for i in lesson.modul.lessons.all %}
+                    {% if i.is_paid %}
+                        {% if i.id in user_purchased_ids %}
+                            <!-- SOTIB OLINGAN pullik dars -->
+                            <a href="{% url 'lesson' i.id %}"
+                               class="lesson-item block {% if i.id == lesson.id %}active{% endif %}">
+                                <div class="flex items-center">
+                                    {% if user in i.completed_by.all %}
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20
+                                                    text-green-400 flex items-center justify-center mr-3 animate-pulse">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    {% else %}
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20
+                                                    text-blue-400 flex items-center justify-center mr-3">
+                                            <span class="text-sm font-bold">{{ forloop.counter }}</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="flex-1">
+                                        <h4 class="font-medium">{{ i.title }}</h4>
+                                        <p class="text-xs text-slate-400">{{ i.time }} daqiqa</p>
+                                    </div>
+                                    {% if i.id == lesson.id %}
+                                        <div class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                                    {% elif user in i.completed_by.all %}
+                                        <i class="fas fa-check text-green-400"></i>
+                                    {% else %}
+                                        <i class="fas fa-play text-blue-400"></i>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% else %}
+                            <!-- SOTIB OLINMAGAN pullik dars -->
+                            <div class="lesson-item opacity-60">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700/50 to-slate-800/50
+                                                text-slate-400 flex items-center justify-center mr-3">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-slate-400">{{ i.title }}</h4>
+                                        <p class="text-xs text-slate-500">{{ i.time }} daqiqa</p>
+                                    </div>
+                                    <i class="fas fa-lock text-slate-500"></i>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- BEPUL DARS -->
+                        <a href="{% url 'lesson' i.id %}"
+                           class="lesson-item block {% if i.id == lesson.id %}active{% endif %}">
+                            <div class="flex items-center">
+                                {% if user in i.completed_by.all %}
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20
+                                                text-green-400 flex items-center justify-center mr-3 animate-pulse">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20
+                                                text-blue-400 flex items-center justify-center mr-3">
+                                        <span class="text-sm font-bold">{{ forloop.counter }}</span>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1">
+                                    <h4 class="font-medium">{{ i.title }}</h4>
+                                    <p class="text-xs text-slate-400">{{ i.time }} daqiqa</p>
+                                </div>
+                                {% if i.id == lesson.id %}
+                                    <div class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                                {% elif user in i.completed_by.all %}
+                                    <i class="fas fa-check text-green-400"></i>
+                                {% else %}
+                                    <i class="fas fa-play text-blue-400"></i>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Modul Progressi -->
+                <div class="progress-bar-container">
+                    <div class="flex justify-between mb-3">
+                        <span class="text-sm font-medium text-white">Modul progressi:</span>
+                        <span class="text-sm font-bold text-blue-400">
+                            {{ completed_lessons }}/{{ total_lessons }}
+                        </span>
+                    </div>
+                    <div class="progress-bar mb-2">
+                        <div class="progress-fill animate-progressFill"
+                             style="width: {{ progress_percentage }}%"></div>
+                    </div>
+                    <p class="text-xs text-slate-400 text-center">
+                        {{ progress_percentage }}% yakunlandi
+                    </p>
+                </div>
+
+                <!-- Qo'shimcha Tugmalar -->
+                <div class="mt-6 space-y-3">
+                    <button id="takeNotesBtn" class="w-full py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20
+                                                      hover:from-purple-600/30 hover:to-pink-600/30 text-purple-300
+                                                      rounded-xl border border-purple-500/30 transition-all duration-300
+                                                      transform hover:scale-[1.02]">
+                        <i class="fas fa-edit mr-2"></i> Eslatma qo'shish
+                    </button>
+
+                    <button id="shareLessonBtn" class="w-full py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20
+                                                        hover:from-blue-600/30 hover:to-cyan-600/30 text-blue-300
+                                                        rounded-xl border border-blue-500/30 transition-all duration-300
+                                                        transform hover:scale-[1.02]">
+                        <i class="fas fa-share-alt mr-2"></i> Ulashish
+                    </button>
+
+                    <button id="askQuestionBtn" class="w-full py-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20
+                                                        hover:from-green-600/30 hover:to-emerald-600/30 text-green-300
+                                                        rounded-xl border border-green-500/30 transition-all duration-300
+                                                        transform hover:scale-[1.02]">
+                        <i class="fas fa-question-circle mr-2"></i> Savol berish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ESLATMA MODALI -->
+<div id="notesModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+    <div class="bg-slate-800 rounded-2xl w-full max-w-md relative course-card animate-fadeInUp">
+        <button id="closeNotesBtn"
+                class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl transition-colors">
+            ✕
+        </button>
+
+        <div class="p-6">
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20
+                            flex items-center justify-center mr-3">
+                    <i class="fas fa-edit text-purple-400"></i>
+                </div>
+                Eslatma qo'shish
+            </h3>
+
+            <div class="mb-6">
+                <textarea id="noteText"
+                          class="w-full h-48 bg-slate-900/50 border border-slate-700/50 rounded-xl p-4
+                                 text-white resize-none focus:outline-none focus:border-purple-500
+                                 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                          placeholder="Dars haqida eslatmalaringizni yozing..."></textarea>
+                <p class="text-sm text-slate-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i> Eslatmalaringiz avtomatik ravishda saqlanadi
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="saveNoteBtn"
+                        class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500
+                               hover:to-pink-500 rounded-xl font-medium transition-all duration-300
+                               transform hover:scale-[1.02]">
+                    <i class="fas fa-save mr-2"></i> Saqlash
+                </button>
+                <button id="cancelNoteBtn"
+                        class="flex-1 py-3 bg-slate-700/50 hover:bg-slate-700 text-slate-300
+                               rounded-xl font-medium transition-all duration-300
+                               transform hover:scale-[1.02] border border-slate-600/50">
+                    <i class="fas fa-times mr-2"></i> Bekor qilish
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MUVAFFAQIYAT BILDIRISHNOMASI -->
+<div id="successNotification" class="notification hidden">
+    <div class="bg-gradient-to-r from-green-500/90 to-emerald-600/90 backdrop-blur-sm
+                border border-green-400/50 rounded-xl p-4 max-w-sm shadow-2xl shadow-green-500/25
+                transform transition-all duration-300 hover:scale-105">
+        <div class="flex items-center">
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3 animate-bounce">
+                <i class="fas fa-check text-white text-lg"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-white">Muvaffaqiyatli!</h4>
+                <p class="text-sm text-white/90">Dars yakunlandi deb belgilandi!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// SAYT YUKLANISHIDA
+document.addEventListener('DOMContentLoaded', function() {
+    // Loading ekranini yopish
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }, 1000);
+
+    // Progress barlarni animatsiya qilish
+    document.querySelectorAll('.download-progress-bar').forEach(bar => {
+        const progress = bar.getAttribute('data-progress');
+        setTimeout(() => {
+            bar.style.width = progress + '%';
+        }, 500);
+    });
+
+    // LIKE TUGMASI
+    const likeBtn = document.getElementById('likeBtn');
+    let liked = false;
+    let likes = parseInt('{{ lesson.likes|default:"0" }}');
+
+    likeBtn.addEventListener('click', function() {
+        liked = !liked;
+        const heartIcon = this.querySelector('i');
+        const likesSpan = this.querySelector('span');
+
+        if (liked) {
+            heartIcon.classList.remove('far', 'fa-heart');
+            heartIcon.classList.add('fas', 'fa-heart');
+            this.classList.remove('hover:text-red-500');
+            this.classList.add('text-red-500');
+            likes++;
+            likesSpan.textContent = likes;
+
+            // Animatsiya
+            this.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 300);
+        } else {
+            heartIcon.classList.remove('fas', 'fa-heart');
+            heartIcon.classList.add('far', 'fa-heart');
+            this.classList.remove('text-red-500');
+            this.classList.add('hover:text-red-500');
+            likes--;
+            likesSpan.textContent = likes;
+        }
+    });
+
+    // ESLATMA MODALI
+    const takeNotesBtn = document.getElementById('takeNotesBtn');
+    const notesModal = document.getElementById('notesModal');
+    const closeNotesBtn = document.getElementById('closeNotesBtn');
+    const saveNoteBtn = document.getElementById('saveNoteBtn');
+    const cancelNoteBtn = document.getElementById('cancelNoteBtn');
+
+    takeNotesBtn.addEventListener('click', () => {
+        notesModal.classList.remove('hidden');
+        notesModal.classList.add('flex');
+        document.getElementById('noteText').focus();
+    });
+
+    [closeNotesBtn, cancelNoteBtn].forEach(btn => {
+        btn.addEventListener('click', () => {
+            notesModal.classList.add('hidden');
+            notesModal.classList.remove('flex');
+        });
+    });
+
+    saveNoteBtn.addEventListener('click', () => {
+        const noteText = document.getElementById('noteText').value.trim();
+
+        if (!noteText) {
+            alert('Iltimos, eslatma yozing!');
+            return;
+        }
+
+        // Loading holatini ko'rsatish
+        saveNoteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saqlanmoqda...';
+        saveNoteBtn.disabled = true;
+
+        // Simulate API call
+        setTimeout(() => {
+            // Muvaffaqiyat bildirishnomasi
+            showSuccessNotification('Eslatma muvaffaqiyatli saqlandi!');
+
+            // Modalni yopish
+            notesModal.classList.add('hidden');
+            notesModal.classList.remove('flex');
+
+            // Tugmani qayta tiklash
+            saveNoteBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Saqlash';
+            saveNoteBtn.disabled = false;
+            document.getElementById('noteText').value = '';
+        }, 1500);
+    });
+
+    // ULASHISH TUGMASI
+    const shareLessonBtn = document.getElementById('shareLessonBtn');
+    shareLessonBtn.addEventListener('click', async () => {
+        const shareData = {
+            title: '{{ lesson.title }}',
+            text: 'Python dasturlash kursining darsi',
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                showSuccessNotification('Havola nusxalandi!');
+            }
+        } catch (err) {
+            console.log('Ulashish xatosi:', err);
+        }
+    });
+
+    // SAVOL BERISH TUGMASI
+    const askQuestionBtn = document.getElementById('askQuestionBtn');
+    askQuestionBtn.addEventListener('click', () => {
+        const question = prompt('Dars haqida qanday savolingiz bor?');
+        if (question && question.trim() !== '') {
+            showSuccessNotification('Savolingiz qabul qilindi! Tez orada javob beramiz.');
+        }
+    });
+
+    // KODNI NUSXALASH
+    document.querySelectorAll('.code-block').forEach(block => {
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'absolute top-3 right-3 text-slate-400 hover:text-white transition-all duration-300 opacity-0';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+
+        block.style.position = 'relative';
+        block.appendChild(copyBtn);
+
+        block.addEventListener('mouseenter', () => {
+            copyBtn.style.opacity = '1';
+        });
+
+        block.addEventListener('mouseleave', () => {
+            copyBtn.style.opacity = '0';
+        });
+
+        copyBtn.addEventListener('click', async () => {
+            const code = block.querySelector('code').textContent;
+            try {
+                await navigator.clipboard.writeText(code);
+                copyBtn.innerHTML = '<i class="fas fa-check text-green-400"></i>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            } catch (err) {
+                alert('Nusxalash xatosi!');
+            }
+        });
+    });
+
+    // YUKLASH TUGMALARI
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.download-card');
+            const progressBar = card.querySelector('.download-progress-bar');
+
+            // Simulate download progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showSuccessNotification('Yuklab olish muvaffaqiyatli yakunlandi!');
+                }
+            }, 200);
+        });
+    });
+
+    // VIDEO PROGRESS TRACKING
+    const video = document.querySelector('iframe');
+    let watchTime = 0;
+    const totalTime = {{ lesson.time|default:"15" }} * 60; // sekundga
+    let progressInterval;
+
+    window.addEventListener('focus', () => {
+        if (!progressInterval && watchTime < totalTime) {
+            progressInterval = setInterval(() => {
+                if (watchTime < totalTime) {
+                    watchTime += 5;
+                    const progressPercent = (watchTime / totalTime) * 100;
+                    // Real appda serveryga yuborish kerak
+                    console.log('Video progress:', progressPercent.toFixed(1) + '%');
+                } else {
+                    clearInterval(progressInterval);
+                }
+            }, 5000);
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+    });
+
+    // SUCCESS NOTIFICATION FUNKSIYASI
+    function showSuccessNotification(message) {
+        const notification = document.getElementById('successNotification');
+        const notificationText = notification.querySelector('p');
+
+        notificationText.textContent = message;
+        notification.classList.remove('hidden');
+
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 3000);
+    }
+
+    // DARSLAR RO'YXATINI YORQINLASHTIRISH
+    const currentLesson = document.querySelector('.lesson-item.active');
+    if (currentLesson) {
+        setTimeout(() => {
+            currentLesson.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1000);
+    }
+});
+</script>
+{% endblock %}

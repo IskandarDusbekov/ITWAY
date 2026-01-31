@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Animatsiyalar uchun */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .alert {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message-item {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Progress bar animatsiyasi */
+        .progress-bar {
+            animation: shrink 5s linear forwards;
+        }
+
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800 p-8 rounded-lg w-full max-w-md shadow-lg relative">
+        <!-- Xabarlarni ko'rsatish uchun konteyner -->
+        <div id="message-container" class="mb-6 space-y-3">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="message-item alert p-4 rounded-lg border-l-4
+                    {% if message.tags == 'success' %}
+                        bg-green-900/30 border-green-500 text-green-300
+                    {% elif message.tags == 'error' %}
+                        bg-red-900/30 border-red-500 text-red-300
+                    {% elif message.tags == 'warning' %}
+                        bg-yellow-900/30 border-yellow-500 text-yellow-300
+                    {% else %}
+                        bg-blue-900/30 border-blue-500 text-blue-300
+                    {% endif %}">
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-blue-500"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium">{{ message }}</p>
+                        </div>
+                        <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                class="ml-2 text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="progress-bar h-full
+                            {% if message.tags == 'success' %}
+                                bg-green-500
+                            {% elif message.tags == 'error' %}
+                                bg-red-500
+                            {% elif message.tags == 'warning' %}
+                                bg-yellow-500
+                            {% else %}
+                                bg-blue-500
+                            {% endif %}">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Logo yoki sarlavha -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mb-4">
+                <i class="fas fa-lock text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold">Tizimga Kirish</h2>
+            <p class="text-gray-400 mt-2">Hisobingizga kirish uchun ma'lumotlarni kiriting</p>
+        </div>
+
+        <!-- Login formasi -->
+        <form method="POST" class="space-y-6" id="loginForm">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Elektron pochta</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-gray-500"></i>
+                    </div>
+                    <input type="email" name="email" placeholder="email@example.com" required
+                           class="w-full pl-10 p-3 rounded-lg bg-gray-700 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                  transition duration-200">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="block text-sm font-medium text-gray-300">Parol</label>
+                    <a href="{% url 'forgot_password' %}" class="text-sm text-blue-400 hover:text-blue-300 hover:underline">Parolni unutdingizmi?</a>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
+                    <input type="password" name="password" placeholder="••••••••" required
+                           class="w-full pl-10 p-3 rounded-lg bg-gray-700 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                  transition duration-200">
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fas fa-eye text-gray-500 hover:text-gray-300"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded bg-gray-700 border-gray-600">
+                <label for="remember" class="ml-2 text-sm text-gray-300">Meni eslab qol</label>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700
+                           p-3 rounded-lg font-bold transition duration-300 transform hover:-translate-y-0.5
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                <i class="fas fa-sign-in-alt mr-2"></i> Tizimga Kirish
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-700">
+            <p class="text-gray-400 text-center">
+                Hisobingiz yo'qmi?
+                <a href="{% url 'register' %}"
+                   class="text-blue-400 hover:text-blue-300 hover:underline font-medium ml-1">
+                   Ro'yxatdan o'tish
+                </a>
+            </p>
+        </div>
+
+        <!-- Demo foydalanuvchilar uchun qisqacha ma'lumot -->
+        <div class="mt-6 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+            <p class="text-sm text-gray-400 text-center">
+                <i class="fas fa-info-circle mr-1"></i>
+                Demo uchun: <span class="text-blue-300">admin@example.com</span> /
+                <span class="text-blue-300">password123</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parolni ko'rsatish/yashirish
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.querySelector('input[name="password"]');
+            const eyeIcon = togglePassword.querySelector('i');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('fa-eye');
+                eyeIcon.classList.toggle('fa-eye-slash');
+            });
+
+            // Xabarlarni avtomatik o'chirish
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(message => {
+                // Progress bar boshqaruvi
+                const progressBar = message.querySelector('.progress-bar');
+
+                // 5 soniyadan keyin xabarni o'chirish
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    message.style.transition = 'opacity 0.3s, transform 0.3s';
+
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            });
+
+            // Formani yuborishda animatsiya
+            const loginForm = document.getElementById('loginForm');
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+
+            loginForm.addEventListener('submit', function() {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Kirilmoqda...';
+                submitButton.classList.remove('hover:-translate-y-0.5');
+                submitButton.classList.add('opacity-75');
+            });
+
+            // Demo ma'lumotlarni avtomatik to'ldirish (faqat demo)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('demo') === 'true') {
+                document.querySelector('input[name="email"]').value = 'admin@example.com';
+                document.querySelector('input[name="password"]').value = 'password123';
+
+                // Demo xabarini ko'rsatish
+                showMessage('info', 'Demo ma\'lumotlar avtomatik ravishda to\'ldirildi. Kirish tugmasini bosing.');
+            }
+
+            // Yangi xabarlarni ko'rsatish funksiyasi
+            window.showMessage = function(type, text) {
+                const container = document.getElementById('message-container');
+
+                const messageTypes = {
+                    'success': {
+                        class: 'bg-green-900/30 border-green-500 text-green-300',
+                        icon: 'check-circle text-green-500'
+                    },
+                    'error': {
+                        class: 'bg-red-900/30 border-red-500 text-red-300',
+                        icon: 'exclamation-circle text-red-500'
+                    },
+                    'warning': {
+                        class: 'bg-yellow-900/30 border-yellow-500 text-yellow-300',
+                        icon: 'exclamation-triangle text-yellow-500'
+                    },
+                    'info': {
+                        class: 'bg-blue-900/30 border-blue-500 text-blue-300',
+                        icon: 'info-circle text-blue-500'
+                    }
+                };
+
+                const messageType = messageTypes[type] || messageTypes['info'];
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message-item alert p-4 rounded-lg border-l-4 ${messageType.class}`;
+                messageDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                            <i class="fas ${messageType.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium">${text}</p>
+                        </div>
+                        <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                class="ml-2 text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="progress-bar h-full ${type === 'success' ? 'bg-green-500' :
+                            type === 'error' ? 'bg-red-500' :
+                            type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'}">
+                        </div>
+                    </div>
+                `;
+
+                container.prepend(messageDiv);
+
+                // Yangi xabarni ham avtomatik o'chirish
+                setTimeout(() => {
+                    messageDiv.style.opacity = '0';
+                    messageDiv.style.transform = 'translateY(-10px)';
+                    messageDiv.style.transition = 'opacity 0.3s, transform 0.3s';
+
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            };
+        });
+    </script>
+</body>
+</html>

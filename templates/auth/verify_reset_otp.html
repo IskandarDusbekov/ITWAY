@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Tasdiqlash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800 p-8 rounded-lg w-full max-w-md shadow-lg">
+        <!-- Xabarlar -->
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg border-l-4
+                {% if message.tags == 'success' %}
+                    bg-green-900/30 border-green-500 text-green-300
+                {% elif message.tags == 'error' %}
+                    bg-red-900/30 border-red-500 text-red-300
+                {% else %}
+                    bg-blue-900/30 border-blue-500 text-blue-300
+                {% endif %}">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mr-3">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                    </div>
+                    <p class="font-medium">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Logo va sarlavha -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-full mb-4">
+                <i class="fas fa-shield-alt text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold">OTP Tasdiqlash</h2>
+            <p class="text-gray-400 mt-2">Emailingizga yuborilgan OTP kodni kiriting</p>
+        </div>
+
+        <!-- Forma -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">OTP Kod (6 ta raqam)</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-key text-gray-500"></i>
+                    </div>
+                    <input type="text" name="otp" placeholder="000000" required maxlength="6"
+                           class="w-full pl-10 p-3 rounded-lg bg-gray-700 border border-gray-600
+                                  text-center text-xl tracking-widest
+                                  focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+                <p class="text-sm text-gray-400">OTP kodi faqat 3 daqiqa davomida amal qiladi</p>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700
+                               p-3 rounded-lg font-bold transition duration-300 mr-3">
+                    <i class="fas fa-check-circle mr-2"></i> Tasdiqlash
+                </button>
+
+                <a href="{% url 'forgot_password' %}"
+                   class="text-sm text-blue-400 hover:text-blue-300 hover:underline whitespace-nowrap">
+                    <i class="fas fa-redo mr-1"></i> Qayta yuborish
+                </a>
+            </div>
+
+            <div class="text-center mt-6">
+                <a href="{% url 'login' %}" class="text-blue-400 hover:text-blue-300 hover:underline">
+                    <i class="fas fa-arrow-left mr-2"></i> Kirish sahifasiga qaytish
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

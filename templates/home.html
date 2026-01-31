@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python & Django Darslari | Bosh sahifa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 glass-effect border-b border-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <i class="fab fa-python text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">PyLearn</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-300 hover:text-white font-medium transition">Imkoniyatlar</a>
+                    <a href="#courses" class="text-slate-300 hover:text-white font-medium transition">Kurslar</a>
+                    <a href="#pricing" class="text-slate-300 hover:text-white font-medium transition">Narxlar</a>
+                    <a href="#about" class="text-slate-300 hover:text-white font-medium transition">Biz haqimizda</a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center space-x-4">
+
+                        <a href="{% url 'login' %}" class="px-4 py-2 text-slate-300 hover:text-white font-medium transition">
+                            Kirish
+                        </a>
+                        <a href="{% url 'register' %}" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-medium transition">
+                            Ro'yxatdan o'tish
+                        </a>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden py-20 md:py-32">
+        <!-- Background Elements -->
+        <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6 animate-fade-in-up">
+                    <i class="fas fa-rocket text-blue-400 mr-2"></i>
+                    <span class="text-blue-300 font-medium">Python va Django kurslari</span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    <span class="text-white">O'rganing</span>
+                    <span class="text-gradient"> Kodlang</span>
+                    <span class="text-white"> Ishlang</span>
+                </h1>
+
+                <p class="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-10">
+                    Zamonaviy web dasturlashni <span class="text-blue-400 font-semibold">Python & Django</span> asosida o'rganing. Real loyihalar, amaliy mashqlar va tajribali ustozlar.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                    <a href="#courses" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center">
+                        <i class="fas fa-play-circle mr-3"></i>
+                        Kurslarni ko'rish
+                    </a>
+                    <a href="#features" class="px-8 py-4 glass-effect hover:bg-slate-800/50 border border-slate-700/50 rounded-xl font-bold text-lg transition-all duration-300 flex items-center">
+                        <i class="fas fa-info-circle mr-3"></i>
+                        Batafsil ma'lumot
+                    </a>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-700/50">
+                        <div class="text-3xl font-bold text-white mb-2">500+</div>
+                        <div class="text-slate-400">O'quvchilar</div>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-700/50">
+                        <div class="text-3xl font-bold text-white mb-2">50+</div>
+                        <div class="text-slate-400">Darslar</div>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-700/50">
+                        <div class="text-3xl font-bold text-white mb-2">1000+</div>
+                        <div class="text-slate-400">Kod satrlari</div>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-700/50">
+                        <div class="text-3xl font-bold text-white mb-2">24/7</div>
+                        <div class="text-slate-400">Qo'llab-quvvatlash</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Nega aynan biz?</h2>
+                <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                    Zamonaviy texnologiyalar, amaliy loyihalar va qulay o'qitish metodlari
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-8 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 border border-slate-700/50 hover-scale">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-laptop-code text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Amaliy Kodlash</h3>
+                    <p class="text-slate-400 mb-6">
+                        Har bir darsda real loyihalar yaratasiz. Teoriya emas, amaliyotga e'tibor.
+                    </p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Real loyihalar
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Kod sharhlari
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Amaliy mashqlar
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-8 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 border border-slate-700/50 hover-scale">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Professional Mentor</h3>
+                    <p class="text-slate-400 mb-6">
+                        5+ yillik tajribaga ega ustozlardan dars oling. Savollaringizga tez javob oling.
+                    </p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Tajribali ustozlar
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Shaxsiy maslahat
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Kod tekshiruvi
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-8 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 border border-slate-700/50 hover-scale">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-briefcase text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Karyera Yordami</h3>
+                    <p class="text-slate-400 mb-6">
+                        Kursni tugatgandan so'ng portfolio yaratish va ish topishda yordam beramiz.
+                    </p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Portfolio yaratish
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Resume tayyorlash
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Ish intervyu tayyorgarligi
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="py-20 bg-gradient-to-b from-slate-900/50 to-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Bizning Kurslarimiz</h2>
+                <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                    Boshlang'ichdan professional darajagacha bo'lgan turli kurslar
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Course 1 -->
+                <div class="rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 to-slate-800 border border-slate-700/50 hover-scale">
+                    <div class="p-1 bg-gradient-to-r from-blue-500 to-purple-600">
+                        <div class="bg-slate-900 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">Bepul</span>
+                                <span class="text-slate-400 text-sm">10 ta dars</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">Python Asoslari</h3>
+                            <p class="text-slate-400 mb-6">
+                                Python dasturlash tilining asosiy tushunchalari va sintaksisi
+                            </p>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    <span>8 soat</span>
+                                </div>
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-user-graduate mr-2"></i>
+                                    <span>Boshlang'ich</span>
+                                </div>
+                            </div>
+                            <a href="#" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg text-center font-medium transition">
+                                Kursni ko'rish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 2 -->
+                <div class="rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 to-slate-800 border border-slate-700/50 hover-scale">
+                    <div class="p-1 bg-gradient-to-r from-purple-500 to-pink-600">
+                        <div class="bg-slate-900 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">Pullik</span>
+                                <span class="text-slate-400 text-sm">25 ta dars</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">Django Web Dasturlash</h3>
+                            <p class="text-slate-400 mb-6">
+                                To'liq qo'llab-quvvatlovchi web ilovalar yaratish
+                            </p>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    <span>25 soat</span>
+                                </div>
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-user-graduate mr-2"></i>
+                                    <span>O'rta</span>
+                                </div>
+                            </div>
+                            <a href="#" class="block w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg text-center font-medium transition">
+                                Kursni ko'rish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 3 -->
+                <div class="rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 to-slate-800 border border-slate-700/50 hover-scale">
+                    <div class="p-1 bg-gradient-to-r from-emerald-500 to-teal-600">
+                        <div class="bg-slate-900 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-medium">Pullik</span>
+                                <span class="text-slate-400 text-sm">15 ta dars</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">Django REST API</h3>
+                            <p class="text-slate-400 mb-6">
+                                RESTful API lar yaratish va boshqarish
+                            </p>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    <span>15 soat</span>
+                                </div>
+                                <div class="flex items-center text-slate-400">
+                                    <i class="fas fa-user-graduate mr-2"></i>
+                                    <span>Ilg'or</span>
+                                </div>
+                            </div>
+                            <a href="#" class="block w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 rounded-lg text-center font-medium transition">
+                                Kursni ko'rish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center px-6 py-3 glass-effect hover:bg-slate-800/50 border border-slate-700/50 rounded-xl font-medium transition">
+                    Barcha kurslarni ko'rish
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Narxlar</h2>
+                <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+                    Har bir darajaga mos narxlar. O'zingizga qulay variantni tanlang
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic Plan -->
+                <div class="p-8 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-800 border border-slate-700/50">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-4">Boshlang'ich</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">Bepul</span>
+                        </div>
+                        <p class="text-slate-400">Python asoslari va boshqa bepul kurslar</p>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            10+ bepul dars
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Video materiallar
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Kod namunalari
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-times text-red-500 mr-3"></i>
+                            Shaxsiy mentor
+                        </li>
+                        <li class="fas fa-times text-red-500 mr-3"></i>
+                            Pullik kurslar
+                        </li>
+                    </ul>
+
+                    <a href="{% url 'register' %}" class="block w-full py-3 glass-effect hover:bg-slate-800/50 border border-slate-700/50 rounded-lg text-center font-medium transition">
+                        Ro'yxatdan o'tish
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="p-8 rounded-2xl bg-gradient-to-b from-blue-900/30 to-blue-800/20 border-2 border-blue-500/50 relative transform scale-105">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span class="px-4 py-1 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full text-sm font-medium">
+                            Eng mashhur
+                        </span>
+                    </div>
+
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-4">Professional</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">49 000</span>
+                            <span class="text-slate-400">so'm/oy</span>
+                        </div>
+                        <p class="text-slate-400">To'liq kurslar va qo'llab-quvvatlash</p>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Barcha kurslar
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Shaxsiy mentor
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Kod tekshiruvi
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Loyiha yordami
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Sertifikat
+                        </li>
+                    </ul>
+
+                    <a href="{% url 'register' %}" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg text-center font-bold transition">
+                        Boshlash
+                    </a>
+                </div>
+
+                <!-- Team Plan -->
+                <div class="p-8 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-800 border border-slate-700/50">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold mb-4">Guruh</h3>
+                        <div class="mb-4">
+                            <span class="text-4xl font-bold">299 000</span>
+                            <span class="text-slate-400">so'm/oy</span>
+                        </div>
+                        <p class="text-slate-400">5 kishigacha guruh uchun</p>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            5 ta foydalanuvchi
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Barcha kurslar
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Guruh mentorligi
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Progress monitoring
+                        </li>
+                        <li class="flex items-center text-slate-300">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Maxsus seminar
+                        </li>
+                    </ul>
+
+                    <a href="#" class="block w-full py-3 glass-effect hover:bg-slate-800/50 border border-slate-700/50 rounded-lg text-center font-medium transition">
+                        Aloqa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gradient-to-b from-transparent to-slate-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Biz haqimizda</h2>
+                    <p class="text-lg text-slate-400 mb-6">
+                        <span class="text-blue-400 font-semibold">ITWAY</span> - bu Python va Django asosida web va Backend dasturlashni o'rgatishga ixtisoslashgan platforma. Bizning maqsadimiz - sifatli bilim berish va haqiqiy dasturchilar yetishtirish.
+                    </p>
+                    <p class="text-lg text-slate-400 mb-8">
+                        2024 yildan beri 500+ o'quvchiga Python va Django bo'yicha bilim berib kelmoqdamiz. Har bir o'quvchimizning muvaffaqiyati biz uchun eng muhimdir.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-3xl font-bold text-white mb-2">3+</div>
+                            <div class="text-slate-400">Yillik tajriba</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-white mb-2">500+</div>
+                            <div class="text-slate-400">Muvaffaqiyatli o'quvchilar</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-white mb-2">50+</div>
+                            <div class="text-slate-400">Real loyihalar</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-white mb-2">24/7</div>
+                            <div class="text-slate-400">Qo'llab-quvvatlash</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="relative z-10 p-8 rounded-2xl glass-effect border border-slate-700/50">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                                    <i class="fas fa-quote-left text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-lg text-slate-300 italic mb-4">
+                                    "ITWAY platformasi orqali Django'ni mukammal o'rgandim. Endi o'zimning startup loyihamni ishga tushirdim. Rahmat!"
+                                </p>
+                                <div>
+                                    <div class="font-bold text-white">Iskandar Dusbekov</div>
+                                    <div class="text-slate-400 text-sm">Full Stack Developer</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decorative elements -->
+                    <div class="absolute -top-4 -right-4 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="relative rounded-3xl overflow-hidden p-12 gradient-bg">
+                <!-- Background pattern -->
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+                </div>
+
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">
+                        Karyerangizni bugundan boshlang!
+                    </h2>
+                    <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                        Python va Django dasturchisi bo'lish uchun eng yaxshi vaqt - hozir!
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'profile' %}" class="px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 rounded-xl font-bold text-lg transition">
+                                Profilega o'tish
+                            </a>
+                            <a href="#courses" class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-xl font-bold text-lg transition">
+                                Kurslarni ko'rish
+                            </a>
+                        {% else %}
+                            <a href="{% url 'register' %}" class="px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 rounded-xl font-bold text-lg transition">
+                                Ro'yxatdan o'tish
+                            </a>
+                            <a href="#courses" class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-xl font-bold text-lg transition">
+                                Kurslarni ko'rish
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/50 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <i class="fab fa-python text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">PyLearn</span>
+                    </div>
+                    <p class="text-slate-400">
+                        Python va Django asosida web dasturlashni o'rganish platformasi
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Kurslar</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-400 hover:text-white transition">Python Asoslari</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white transition">Django Web Dasturlash</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white transition">Django REST API</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white transition">SQL va Ma'lumotlar bazasi</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Platforma</h3>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'login' %}" class="text-slate-400 hover:text-white transition">Kirish</a></li>
+                        <li><a href="{% url 'register' %}" class="text-slate-400 hover:text-white transition">Ro'yxatdan o'tish</a></li>
+                        <li><a href="#pricing" class="text-slate-400 hover:text-white transition">Narxlar</a></li>
+                        <li><a href="#about" class="text-slate-400 hover:text-white transition">Biz haqimizda</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Aloqa</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-envelope mr-3"></i>
+                            info@pylearn.uz
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-phone mr-3"></i>
+                            +998 90 123 45 67
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-map-marker-alt mr-3"></i>
+                            Toshkent, O'zbekiston
+                        </li>
+                    </ul>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800/50 mt-12 pt-8 text-center">
+                <p class="text-slate-400">
+                    &copy; 2024 PyLearn. Barcha huquqlar himoyalangan.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add animation to elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements with animation
+        document.querySelectorAll('.hover-scale').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

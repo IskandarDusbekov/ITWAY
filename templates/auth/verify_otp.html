@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Tasdiqlash</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            margin-bottom: 25px;
+        }
+
+        .logo i {
+            font-size: 50px;
+            color: #6a11cb;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background-color: #f8f9ff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 4px solid #6a11cb;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-box i {
+            color: #6a11cb;
+            margin-right: 8px;
+        }
+
+        form {
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 18px;
+        }
+
+        input[name="otp"] {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: 2px solid #e1e5f1;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        input[name="otp"]:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+
+        input[name="otp"]::placeholder {
+            letter-spacing: 1px;
+            font-weight: normal;
+            color: #aaa;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn i {
+            margin-right: 10px;
+        }
+
+        .help-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .help-links a {
+            color: #6a11cb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .help-links a:hover {
+            color: #2575fc;
+            text-decoration: underline;
+        }
+
+        .messages {
+            margin-top: 25px;
+            min-height: 60px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .message.success {
+            background-color: #e8f7ef;
+            color: #0d8050;
+            border-left: 4px solid #0d8050;
+        }
+
+        .message.error {
+            background-color: #fde8e8;
+            color: #c81e1e;
+            border-left: 4px solid #c81e1e;
+        }
+
+        .message.info {
+            background-color: #e8f4ff;
+            color: #1a73e8;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .message i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .otp-hint {
+            font-size: 13px;
+            color: #888;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .timer span {
+            color: #6a11cb;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+
+            .help-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>OTP Tasdiqlash</h1>
+                <p>Xavfsizlik kodingizni kiriting</p>
+            </div>
+
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> Sizning elektron pochtangizga yoki telefon raqamingizga 6 raqamli tasdiqlash kodi yuborildi. Iltimos, uni quyidagi maydonga kiriting.</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="text" name="otp" placeholder="OTP kod" required maxlength="6" pattern="\d{6}" title="Iltimos, 6 raqamli kodni kiriting">
+                </div>
+                <p class="otp-hint">Iltimos, 6 raqamdan iborat OTP kodini kiriting</p>
+
+                <div class="timer" id="timer">
+                    Kod amal qilish muddati: <span id="countdown">05:00</span>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-check-circle"></i> Tasdiqlash
+                </button>
+            </form>
+
+            <div class="help-links">
+                <a href="#"><i class="fas fa-redo-alt"></i> Kodni qayta yuborish</a>
+                <a href="#"><i class="fas fa-question-circle"></i> Yordam kerakmi?</a>
+            </div>
+
+            <div class="messages" id="message-container">
+                {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="message success">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% elif message.tags == 'error' %}
+                        <div class="message error">
+                            <i class="fas fa-exclamation-circle"></i> {{ message }}
+                        </div>
+                    {% else %}
+                        <div class="message info">
+                            <i class="fas fa-info-circle"></i> {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // OTP kiritish maydonini avtomatik ravishda fokus qilish
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInput = document.querySelector('input[name="otp"]');
+            otpInput.focus();
+
+            // Faqat raqamlar kiritilishini ta'minlash
+            otpInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+            });
+
+            // Vaqtni hisoblash funksiyasi
+            let timeLeft = 180; // 5 daqiqa = 300 soniya
+            const countdownElement = document.getElementById('countdown');
+
+            function updateCountdown() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft > 0) {
+                    timeLeft--;
+                } else {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "00:00";
+                    countdownElement.style.color = "#c81e1e";
+
+                    // Vaqt tugagach ogohlantirish xabarini ko'rsatish
+                    const messageContainer = document.getElementById('message-container');
+                    const timeMessage = document.createElement('div');
+                    timeMessage.className = 'message error';
+                    timeMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> OTP kodingizning amal qilish muddati tugadi. Iltimos, yangi kod so\'rang.';
+                    messageContainer.prepend(timeMessage);
+                }
+            }
+
+            // Har soniyada vaqtni yangilash
+            const timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Dastlabki chaqirish
+
+            // Formani yuborishda tekshirish
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const otpValue = otpInput.value;
+
+                if (otpValue.length !== 6) {
+                    e.preventDefault();
+                    showMessage('error', 'Iltimos, 6 raqamli OTP kodini to\'liq kiriting.');
+                    return;
+                }
+
+                if (timeLeft <= 0) {
+                    e.preventDefault();
+                    showMessage('error', 'OTP kodingizning amal qilish muddati tugagan. Yangi kod so\'rang.');
+                    return;
+                }
+
+                // Agar hammasi yaxshi bo'lsa, yuborishga ruxsat ber
+                showMessage('info', 'OTP kodingiz tekshirilmoqda, iltimos kuting...');
+            });
+
+            // Xabarlarni ko'rsatish funksiyasi
+            function showMessage(type, text) {
+                const messageContainer = document.getElementById('message-container');
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+
+                let icon = 'info-circle';
+                if (type === 'success') icon = 'check-circle';
+                if (type === 'error') icon = 'exclamation-circle';
+
+                message.innerHTML = `<i class="fas fa-${icon}"></i> ${text}`;
+
+                // Avvalgi xabarlarni tozalash
+                messageContainer.innerHTML = '';
+                messageContainer.appendChild(message);
+
+                // Xabarni 5 soniyadan so'ng olib tashlash
+                setTimeout(() => {
+                    if (message.parentNode) {
+                        message.style.opacity = '0';
+                        message.style.transition = 'opacity 0.5s';
+                        setTimeout(() => {
+                            if (message.parentNode) {
+                                message.parentNode.removeChild(message);
+                            }
+                        }, 500);
+                    }
+                }, 5000);
+            }
+
+             });
+        });
+    </script>
+</body>
+</html>

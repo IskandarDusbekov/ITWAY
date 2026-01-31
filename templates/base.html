@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Dasturlash Kursi | Noldan Professionalgacha</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+      <!-- CKEditor codeSnippet CSS -->
+    <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai_sublime.css' %}">
+
+    <!-- Prism CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+
+    <!-- Prism JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- CKEditor codeSnippet JS -->
+    <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            hljs.highlightAll();
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --secondary-dark: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(30, 41, 59, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .course-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .locked-lesson {
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #8b5cf6);
+            transition: width 0.8s ease;
+        }
+
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .unlock-animation {
+            animation: unlock 0.6s ease forwards;
+        }
+
+        .pulse-btn {
+            animation: pulse 2s infinite;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Animatsiyalar */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        @keyframes unlock {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive dizayn */
+        @media (max-width: 768px) {
+            .header-nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .stat-card {
+                margin-bottom: 16px;
+            }
+
+            .course-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .course-info-card {
+                margin-top: 24px;
+            }
+
+            .lesson-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .lesson-item button {
+                margin-top: 12px;
+                width: 100%;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.5s ease;
+            max-width: 320px;
+            width: calc(100% - 40px);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Button hover effects */
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Lesson item */
+        .lesson-item {
+            transition: all 0.2s ease;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .locked-lesson:hover .locked-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+
+    <!-- Header -->
+    <header class="header py-4 px-4 lg:px-8">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                    <i class="fas fa-code text-white text-lg"></i>
+                </div>
+                <h1 class="text-xl font-bold">Python<span class="text-blue-400">UZ</span></h1>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="header-nav hidden md:flex items-center space-x-6">
+                <a href="{%url 'index'%}" class="hover:text-blue-400 transition">Bosh saxifa</a>
+
+                <a href="#" class="hover:text-blue-400 transition">Kurslar</a>
+                <a href="{%url 'home'%}" class="hover:text-blue-400 transition">Chiqish</a>
+                <a href="{%url 'profile'%}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition btn-hover">
+                    Profil
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-2xl hover:text-blue-400 transition">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 h-full w-64 bg-slate-800 z-50 p-6 md:hidden">
+        <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-2">
+                    <i class="fas fa-code text-white"></i>
+                </div>
+                <h2 class="text-lg font-bold">Python<span class="text-blue-400">UZ</span></h2>
+            </div>
+            <button id="closeMenuBtn" class="text-2xl hover:text-blue-400 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="flex flex-col space-y-4">
+            <a href="#" class="text-lg hover:text-blue-400 transition py-3 border-b border-slate-700">Kurslar</a>
+            <a href="{%url 'index'%}" class="text-lg hover:text-blue-400 transition py-3 border-b border-slate-700">Bosh saxifa</a>
+            <a href="#" class="text-lg hover:text-blue-400 transition py-3 border-b border-slate-700">Kirish</a>
+            <a href="{%url 'profile'%}" class="text-lg hover:text-blue-400 transition py-3 border-b border-slate-700">Profil</a>
+        </nav>
+    </div>
+
+{%block content%} {%endblock%}
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 mt-12 py-8 px-4 lg:px-8">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                            <i class="fas fa-code text-white"></i>
+                        </div>
+                        <h2 class="text-xl font-bold">Python<span class="text-blue-400">UZ</span></h2>
+                    </div>
+                    <p class="text-slate-400 max-w-md">O'zbekistonning eng yaxshi onlayn dasturlash kurslari platformasi.</p>
+                </div>
+
+                <div class="flex space-x-6">
+                    <a href="#" class="text-slate-400 hover:text-blue-400 transition">
+                        <i class="fab fa-telegram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-red-400 transition">
+                        <i class="fab fa-youtube text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-pink-400 transition">
+                        <i class="fab fa-instagram text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-8 pt-8 text-center text-slate-500 text-sm">
+                <p>© 2026 PythonUZ. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sayt yuklanganda loading ekrani
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Mobile Menu Functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Purchase Modal Functionality
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const purchaseModal = document.getElementById('purchaseModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelPurchaseBtn = document.getElementById('cancelPurchaseBtn');
+        const confirmPurchaseBtn = document.getElementById('confirmPurchaseBtn');
+        const successNotification = document.getElementById('successNotification');
+
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        let selectedPaymentMethod = 'click';
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                paymentMethods.forEach(m => {
+                    m.classList.remove('border', 'border-blue-500');
+                });
+                method.classList.add('border', 'border-blue-500');
+                selectedPaymentMethod = method.dataset.method;
+            });
+        });
+
+        // Set default payment method
+        paymentMethods[0].classList.add('border', 'border-blue-500');
+
+        purchaseBtn.addEventListener('click', () => {
+            purchaseModal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            purchaseModal.classList.add('hidden');
+        });
+
+        cancelPurchaseBtn.addEventListener('click', () => {
+            purchaseModal.classList.add('hidden');
+        });
+
+        // Confirm Purchase - Unlock Lessons
+        confirmPurchaseBtn.addEventListener('click', () => {
+            purchaseModal.classList.add('hidden');
+
+            // Show loading animation
+            const originalText = confirmPurchaseBtn.innerHTML;
+            confirmPurchaseBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Jarayonda...';
+            confirmPurchaseBtn.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                // Show success notification
+                successNotification.classList.remove('hidden');
+
+                // Reset purchase button
+                confirmPurchaseBtn.innerHTML = originalText;
+                confirmPurchaseBtn.disabled = false;
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    successNotification.classList.add('hidden');
+                }, 3000);
+
+                // Unlock all locked lessons
+                const lockedLessons = document.querySelectorAll('.locked-lesson');
+                lockedLessons.forEach((lesson, index) => {
+                    setTimeout(() => {
+                        lesson.classList.add('unlock-animation');
+
+                        // Change locked icon to play icon
+                        const lockIcon = lesson.querySelector('.fa-lock');
+                        if (lockIcon) {
+                            lockIcon.classList.remove('fa-lock', 'text-slate-500');
+                            lockIcon.classList.add('fa-play', 'text-green-400');
+
+                            // Change background
+                            const iconContainer = lockIcon.closest('.w-10');
+                            if (iconContainer) {
+                                iconContainer.classList.remove('bg-slate-700');
+                                iconContainer.classList.add('bg-green-900/30');
+                            }
+
+                            // Remove lock overlay
+                            const lockedOverlay = lesson.querySelector('.locked-overlay');
+                            if (lockedOverlay) {
+                                lockedOverlay.style.display = 'none';
+                            }
+
+                            // Change text color
+                            const lessonTitle = lesson.querySelector('h4');
+                            if (lessonTitle) {
+                                lessonTitle.classList.remove('text-slate-500');
+                            }
+
+                            const lessonDuration = lesson.querySelector('p.text-slate-500');
+                            if (lessonDuration) {
+                                lessonDuration.classList.remove('text-slate-500');
+                                lessonDuration.classList.add('text-slate-400');
+                            }
+
+                            // Remove filter effect
+                            lesson.classList.remove('locked-lesson');
+
+                            // Replace lock icon with button
+                            const actionContainer = lesson.querySelector('.text-slate-500');
+                            if (actionContainer) {
+                                actionContainer.innerHTML = '';
+                                const viewBtn = document.createElement('a');
+                                viewBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition btn-hover text-sm';
+                                viewBtn.href = 'lesson.html';
+                                viewBtn.textContent = 'O\'tish';
+                                actionContainer.appendChild(viewBtn);
+                            }
+                        }
+
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            lesson.classList.remove('unlock-animation');
+                        }, 600);
+                    }, index * 200);
+                });
+
+                // Update progress bar to 100%
+                const progressFill = document.querySelector('.progress-fill');
+                setTimeout(() => {
+                    progressFill.style.width = '100%';
+
+                    // Update progress text
+                    const progressText = document.querySelector('.text-blue-400');
+                    if (progressText) {
+                        progressText.textContent = '24/24 dars';
+                    }
+
+                    const progressPercent = document.querySelector('.font-medium');
+                    if (progressPercent) {
+                        progressPercent.textContent = 'Kursning 100% yakunlandi';
+                    }
+                }, 1000);
+            }, 1500);
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === purchaseModal) {
+                purchaseModal.classList.add('hidden');
+            }
+        });
+
+        // Countdown timer
+        function updateCountdown() {
+            const daysElement = document.querySelector('#countdown span:nth-child(1)');
+            const hoursElement = document.querySelector('#countdown span:nth-child(2)');
+            const minutesElement = document.querySelector('#countdown span:nth-child(3)');
+
+            // Set target date (3 days from now)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 3);
+
+            function update() {
+                const now = new Date();
+                const difference = targetDate - now;
+
+                if (difference > 0) {
+                    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+
+                    daysElement.textContent = days.toString().padStart(2, '0');
+                    hoursElement.textContent = hours.toString().padStart(2, '0');
+                    minutesElement.textContent = minutes.toString().padStart(2, '0');
+                } else {
+                    daysElement.textContent = '00';
+                    hoursElement.textContent = '00';
+                    minutesElement.textContent = '00';
+                }
+            }
+
+            update();
+            setInterval(update, 60000);
+        }
+
+        updateCountdown();
+
+        // Add hover effects to buttons
+        document.querySelectorAll('.btn-hover').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.transform = 'translateY(-2px)';
+            });
+
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

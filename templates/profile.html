@@ -1,0 +1,944 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* ANIMATSIYALAR */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes gradient {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(30px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    /* ANIMATSIYA KLASSLARI */
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 3s ease infinite;
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    .animate-slideInRight {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    /* PROFILE STILLARI */
+    .profile-gradient-bg {
+        background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+        background-size: 200% 200%;
+        animation: gradient 6s ease infinite;
+    }
+
+    .avatar-ring {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .avatar-ring::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg,
+            #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+        border-radius: 22px;
+        z-index: -1;
+        animation: gradient 3s linear infinite;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-color), #8b5cf6);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    /* DARS KARTALARI */
+    .lesson-card {
+        background: linear-gradient(135deg,
+            rgba(30, 41, 59, 0.8),
+            rgba(15, 23, 42, 0.8));
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .lesson-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.05),
+            transparent);
+        transition: left 0.6s;
+    }
+
+    .lesson-card:hover::before {
+        left: 100%;
+    }
+
+    .lesson-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(59, 130, 246, 0.4);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+    }
+
+    /* DARS RO'YXATI SCROLL */
+    .lessons-scroll-container {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .lessons-scroll-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .lessons-scroll-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+
+    .lessons-scroll-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom,
+            var(--accent-color),
+            #8b5cf6);
+        border-radius: 3px;
+    }
+
+    .lessons-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to bottom,
+            #2563eb,
+            #7c3aed);
+    }
+
+    /* DARSLAR GRIDI */
+    .lessons-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    @media (min-width: 1024px) {
+        .lessons-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* PROGRESS BAR */
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+    }
+
+    .progress-ring-bg {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.1);
+        stroke-width: 8;
+    }
+
+    .progress-ring-fill {
+        fill: none;
+        stroke: url(#gradient);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 1s ease;
+    }
+
+    /* BUTTON STILLARI */
+    .action-btn {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+        transition: left 0.5s;
+    }
+
+    .action-btn:hover::before {
+        left: 100%;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* LOADING ANIMATSIYA */
+    .loading-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+    }
+
+    .loading-dots span {
+        width: 12px;
+        height: 12px;
+        margin: 0 4px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        animation: bounce 1.5s infinite;
+    }
+
+    .loading-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+        background: #8b5cf6;
+    }
+
+    .loading-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+        background: #ec4899;
+    }
+
+    /* HOVER EFFECTS */
+    .hover-glow {
+        transition: text-shadow 0.3s ease;
+    }
+
+    .hover-glow:hover {
+        text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .stat-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .lessons-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- MAIN CONTENT -->
+<div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div class="max-w-7xl mx-auto px-4 py-10 animate-fadeIn">
+        <!-- PROFILE HEADER -->
+        <div class="profile-gradient-bg rounded-3xl p-8 mb-10 shadow-2xl border border-slate-700/50
+                    animate-fadeInUp relative overflow-hidden">
+            <!-- Background elements -->
+            <div class="absolute top-0 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 right-0 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+
+            <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                <!-- User info -->
+                <div class="flex items-center gap-6">
+                    <div class="avatar-ring animate-float">
+                        <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500
+                                    flex items-center justify-center text-5xl font-bold text-white shadow-2xl">
+                            {{ user.full_name|default:user.email|first|upper }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200
+                                   bg-clip-text text-transparent animate-slideInRight">
+                            {{ user.full_name|default:user.email }}
+                        </h1>
+                        <p class="text-slate-300 mt-2 flex items-center gap-2">
+                            <i class="fas fa-envelope text-blue-400"></i>
+                            {{ user.email }}
+                        </p>
+
+                        <div class="flex flex-wrap items-center gap-3 mt-4">
+                            <span class="px-4 py-1.5 bg-slate-800/60 rounded-full text-sm text-slate-300
+                                        border border-slate-700/50 flex items-center gap-2">
+                                <i class="fas fa-graduation-cap text-blue-400"></i>
+                                O'quvchi
+                            </span>
+
+                            {% if streak_days > 0 %}
+                            <span class="px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-red-500/20
+                                        rounded-full text-sm text-orange-400 border border-orange-500/30
+                                        flex items-center gap-2 animate-pulse">
+                                <i class="fas fa-fire"></i>
+                                {{ streak_days }} kun ketma-ket
+                            </span>
+                            {% endif %}
+
+                            <span class="px-4 py-1.5 bg-green-500/20 rounded-full text-sm text-green-400
+                                        border border-green-500/30 flex items-center gap-2">
+                                <i class="fas fa-calendar-check"></i>
+                                {{ user.date_joined|date:"d.m.Y" }} dan
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance card -->
+                <div class="mt-6 lg:mt-0">
+                    <div class="bg-gradient-to-r from-emerald-900/40 to-emerald-800/30 backdrop-blur-sm
+                                border border-emerald-500/30 rounded-2xl p-6 shadow-xl hover:shadow-emerald-500/10
+                                transition-all duration-300 transform hover:scale-[1.02]">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2.5 bg-emerald-500/20 rounded-xl">
+                                <i class="fas fa-wallet text-emerald-400 text-xl"></i>
+                            </div>
+                            <span class="text-slate-300 text-sm font-medium">Balansingiz</span>
+                        </div>
+                        <p class="text-3xl font-bold text-white mb-1">
+                            {{ balance|floatformat:0 }}
+                            <span class="text-emerald-400">so'm</span>
+                        </p>
+                        <p class="text-xs text-slate-400">To'lovlar uchun mavjud</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 KARTALI STATISTIKA -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fadeInUp">
+            <!-- Kart 1: Sotib olingan darslar -->
+            <div class="stat-card bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl">
+                        <i class="fas fa-shopping-cart text-blue-400 text-xl"></i>
+                    </div>
+                    {% if total_purchased > 0 %}
+                    <span class="text-green-400 text-sm font-medium animate-bounce">
+                        +{{ total_purchased }} ta
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-slate-400 text-sm mb-2">Sotib olingan darslar</p>
+                <h3 class="text-3xl font-bold text-white">{{ total_purchased }}</h3>
+                <div class="mt-3 h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full
+                                animate-progressFill" style="width: {{ total_purchased|default:"0" }}%"></div>
+                </div>
+            </div>
+
+            <!-- Kart 2: O'qish vaqti -->
+            <div class="stat-card bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl">
+                        <i class="fas fa-clock text-purple-400 text-xl animate-pulse"></i>
+                    </div>
+                    <span class="text-blue-400 text-sm font-medium">{{ total_study_time }} daqiqa</span>
+                </div>
+                <p class="text-slate-400 text-sm mb-2">Umumiy o'qish vaqti</p>
+                <h3 class="text-3xl font-bold text-white">
+                    {% if total_study_hours > 0 %}
+                        {{ total_study_hours }} soat
+                    {% endif %}
+                    {{ total_study_minutes }} min
+                </h3>
+                <div class="mt-3 text-xs text-slate-500">
+                    O'rtacha: {{ avg_study_time|default:"0" }} daqiqa/kun
+                </div>
+            </div>
+
+            <!-- Kart 3: Sarflangan summa -->
+            <div class="stat-card bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-amber-500/20 to-amber-600/20 rounded-xl">
+                        <i class="fas fa-coins text-amber-400 text-xl"></i>
+                    </div>
+                    {% if total_spent > 0 %}
+                    <span class="text-red-400 text-sm font-medium animate-bounce">
+                        -{{ total_spent|floatformat:0 }} so'm
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-slate-400 text-sm mb-2">Sarflangan summa</p>
+                <h3 class="text-3xl font-bold text-white">{{ total_spent|floatformat:0 }} so'm</h3>
+                <div class="mt-3 text-xs text-slate-500">
+                    O'rtacha: {{ avg_spent|default:"0" }} so'm/dars
+                </div>
+            </div>
+
+            <!-- Kart 4: Progress -->
+            <div class="stat-card bg-gradient-to-br from-slate-900/80 to-slate-800/60 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl">
+                        <i class="fas fa-chart-line text-green-400 text-xl animate-pulse"></i>
+                    </div>
+                    <span class="text-green-400 text-sm font-medium">{{ progress_percentage|default:"0" }}%</span>
+                </div>
+                <p class="text-slate-400 text-sm mb-2">Umumiy progress</p>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <svg class="progress-ring" viewBox="0 0 100 100">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3b82f6" />
+                                    <stop offset="50%" stop-color="#8b5cf6" />
+                                    <stop offset="100%" stop-color="#10b981" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill" cx="50" cy="50" r="40"
+                                    stroke-dasharray="251.2"
+                                    stroke-dashoffset="calc(251.2 - (251.2 * {{ progress_percentage|default:"0" }}) / 100)"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-bold text-white">{{ progress_percentage|default:"0" }}%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-bold text-white">{{ completed_lessons|default:"0" }}/{{ total_lessons|default:"0" }}</h3>
+                        <p class="text-xs text-slate-500">Darslar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DARSLAR BLOKLARI (4 KARTADA) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <!-- Sotib olingan darslar -->
+            <div class="lesson-card rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl">
+                            <i class="fas fa-shopping-bag text-blue-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Sotib olingan darslar</h3>
+                            <p class="text-sm text-slate-400">{{ total_purchased }} ta dars</p>
+                        </div>
+                    </div>
+                    <div class="text-xs px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-full">
+                        Yangilangan: bugun
+                    </div>
+                </div>
+
+                {% if recent_purchases %}
+                <div class="lessons-scroll-container">
+                    <div class="space-y-3">
+                        {% for purchase in recent_purchases %}
+                        <div class="group bg-gradient-to-r from-slate-800/50 to-slate-800/30
+                                    border border-slate-700/50 rounded-xl p-4 hover:border-blue-500/40
+                                    transition-all duration-300">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20
+                                                flex items-center justify-center text-white font-bold">
+                                        {{ forloop.counter }}
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full
+                                                border-2 border-slate-900"></div>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white group-hover:text-blue-300 transition-colors">
+                                        {{ purchase.lesson.title }}
+                                    </h4>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <span class="text-xs text-slate-400 flex items-center gap-1">
+                                            <i class="fas fa-book text-xs"></i>
+                                            {{ purchase.lesson.modul.name|truncatechars:20 }}
+                                        </span>
+                                        <span class="text-xs text-slate-400 flex items-center gap-1">
+                                            <i class="far fa-clock text-xs"></i>
+                                            {{ purchase.lesson.time }} daqiqa
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-slate-500 flex items-center gap-2">
+                                    <i class="far fa-calendar"></i>
+                                    {{ purchase.created|date:"d.m.Y H:i" }}
+                                </div>
+                                <a href="{% url 'lesson' purchase.lesson.id %}"
+                                   class="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700
+                                          hover:from-blue-500 hover:to-blue-600 rounded-lg text-xs font-medium
+                                          transition-all duration-300 transform hover:scale-105">
+                                    Davom etish →
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-20 h-20 mx-auto mb-4 text-slate-600">
+                        <i class="fas fa-shopping-cart text-5xl"></i>
+                    </div>
+                    <p class="text-slate-400 mb-4">Siz hali dars sotib olmagansiz</p>
+                    <a href="{% url 'index' %}"
+                       class="inline-block px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700
+                              hover:from-blue-700 hover:to-blue-800 rounded-lg font-medium
+                              transition-all duration-300 transform hover:scale-105">
+                        Darslarni ko'rish
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Yakunlangan darslar -->
+            <div class="lesson-card rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl">
+                            <i class="fas fa-check-circle text-green-400 text-xl animate-pulse"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Yakunlangan darslar</h3>
+                            <p class="text-sm text-slate-400">{{ completed_lessons|default:"0" }} ta dars</p>
+                        </div>
+                    </div>
+                    <div class="text-xs px-3 py-1.5 bg-green-500/20 text-green-400 rounded-full">
+                        Progress: {{ progress_percentage|default:"0" }}%
+                    </div>
+                </div>
+
+                {% if completed_lessons_list %}
+                <div class="lessons-scroll-container">
+                    <div class="space-y-3">
+                        {% for lesson in completed_lessons_list %}
+                        <div class="group bg-gradient-to-r from-slate-800/50 to-slate-800/30
+                                    border border-slate-700/50 rounded-xl p-4 hover:border-green-500/40
+                                    transition-all duration-300">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-green-600/20
+                                                flex items-center justify-center">
+                                        <i class="fas fa-check text-green-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full
+                                                border-2 border-slate-900 animate-pulse"></div>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white group-hover:text-green-300 transition-colors">
+                                        {{ lesson.title }}
+                                    </h4>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <span class="text-xs text-slate-400 flex items-center gap-1">
+                                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                            {{ lesson.rating|default:"5.0" }} baho
+                                        </span>
+                                        <span class="text-xs text-slate-400 flex items-center gap-1">
+                                            <i class="far fa-clock text-xs"></i>
+                                            {{ lesson.time }} daqiqa
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-slate-500">
+                                    Yakunlangan: {{ lesson.completed_date|date:"d.m.Y" }}
+                                </div>
+                                <button onclick="reviewLesson('{{ lesson.id }}')"
+                                        class="px-3 py-1.5 bg-gradient-to-r from-green-600 to-green-700
+                                               hover:from-green-500 hover:to-green-600 rounded-lg text-xs font-medium
+                                               transition-all duration-300 transform hover:scale-105">
+                                    Baho berish
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-20 h-20 mx-auto mb-4 text-slate-600">
+                        <i class="fas fa-graduation-cap text-5xl"></i>
+                    </div>
+                    <p class="text-slate-400 mb-4">Hali hech qanday dars yakunlamagansiz</p>
+                    <a href="{% url 'index' %}"
+                       class="inline-block px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-700
+                              hover:from-green-700 hover:to-green-800 rounded-lg font-medium
+                              transition-all duration-300 transform hover:scale-105">
+                        Darslarni boshlash
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Davom etayotgan darslar -->
+            <div class="lesson-card rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-xl">
+                            <i class="fas fa-play-circle text-yellow-400 text-xl animate-pulse"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Davom etayotgan darslar</h3>
+                            <p class="text-sm text-slate-400">{{ in_progress_lessons|default:"0" }} ta dars</p>
+                        </div>
+                    </div>
+                    <div class="text-xs px-3 py-1.5 bg-yellow-500/20 text-yellow-400 rounded-full">
+                        Faol
+                    </div>
+                </div>
+
+                {% if in_progress_list %}
+                <div class="lessons-scroll-container">
+                    <div class="space-y-3">
+                        {% for lesson in in_progress_list %}
+                        <div class="group bg-gradient-to-r from-slate-800/50 to-slate-800/30
+                                    border border-slate-700/50 rounded-xl p-4 hover:border-yellow-500/40
+                                    transition-all duration-300">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500/20 to-yellow-600/20
+                                                flex items-center justify-center">
+                                        <i class="fas fa-play text-yellow-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full
+                                                border-2 border-slate-900"></div>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-white group-hover:text-yellow-300 transition-colors">
+                                        {{ lesson.title }}
+                                    </h4>
+                                    <div class="flex items-center justify-between mt-1">
+                                        <span class="text-xs text-slate-400 flex items-center gap-1">
+                                            <i class="far fa-clock text-xs"></i>
+                                            {{ lesson.time }} daqiqa
+                                        </span>
+                                        <span class="text-xs text-blue-400 font-medium">
+                                            {{ lesson.progress|default:"0" }}% ko'rilgan
+                                        </span>
+                                    </div>
+                                    <div class="mt-2 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full"
+                                             style="width: {{ lesson.progress|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs text-slate-500">
+                                    So'ngi: {{ lesson.last_viewed|date:"d.m.Y H:i" }}
+                                </div>
+                                <a href="{% url 'lesson' lesson.id %}"
+                                   class="px-3 py-1.5 bg-gradient-to-r from-yellow-600 to-orange-600
+                                          hover:from-yellow-500 hover:to-orange-500 rounded-lg text-xs font-medium
+                                          transition-all duration-300 transform hover:scale-105">
+                                    Davom etish →
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-20 h-20 mx-auto mb-4 text-slate-600">
+                        <i class="fas fa-forward text-5xl"></i>
+                    </div>
+                    <p class="text-slate-400 mb-4">Hali hech qanday darsni boshlaganingiz yo'q</p>
+                    <a href="{% url 'index' %}"
+                       class="inline-block px-5 py-2.5 bg-gradient-to-r from-yellow-600 to-orange-600
+                              hover:from-yellow-700 hover:to-orange-700 rounded-lg font-medium
+                              transition-all duration-300 transform hover:scale-105">
+                        Darslarni boshlash
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- To'lovlar tarixi -->
+            <div class="lesson-card rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl">
+                            <i class="fas fa-history text-purple-400 text-xl animate-pulse"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">To'lovlar tarixi</h3>
+                            <p class="text-sm text-slate-400">{{ total_transactions|default:"0" }} ta operatsiya</p>
+                        </div>
+                    </div>
+                    <div class="text-xs px-3 py-1.5 bg-purple-500/20 text-purple-400 rounded-full">
+                        Oxirgi: bugun
+                    </div>
+                </div>
+
+                {% if transaction_history %}
+                <div class="lessons-scroll-container">
+                    <div class="space-y-3">
+                        {% for transaction in transaction_history %}
+                        <div class="group bg-gradient-to-r from-slate-800/50 to-slate-800/30
+                                    border border-slate-700/50 rounded-xl p-4 hover:border-purple-500/40
+                                    transition-all duration-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center
+                                                {% if transaction.type == 'deposit' %}bg-gradient-to-br from-green-500/20 to-green-600/20
+                                                {% else %}bg-gradient-to-br from-blue-500/20 to-blue-600/20{% endif %}">
+                                        <i class="{% if transaction.type == 'deposit' %}fas fa-plus text-green-400
+                                                 {% else %}fas fa-minus text-blue-400{% endif %}"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-white">
+                                            {{ transaction.description }}
+                                        </h4>
+                                        <p class="text-xs text-slate-400">{{ transaction.created|date:"d.m.Y H:i" }}</p>
+                                    </div>
+                                </div>
+                                <span class="font-bold {% if transaction.type == 'deposit' %}text-green-400
+                                                     {% else %}text-red-400{% endif %}">
+                                    {% if transaction.type == 'deposit' %}+{% else %}-{% endif %}
+                                    {{ transaction.amount|floatformat:0 }} so'm
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>{{ transaction.get_status_display }}</span>
+                                {% if transaction.lesson %}
+                                <a href="{% url 'lesson' transaction.lesson.id %}" class="text-blue-400 hover:text-blue-300">
+                                    Darsga o'tish →
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-20 h-20 mx-auto mb-4 text-slate-600">
+                        <i class="fas fa-exchange-alt text-5xl"></i>
+                    </div>
+                    <p class="text-slate-400 mb-4">Hali hech qanday operatsiya yo'q</p>
+                    <button onclick="window.location.href=''"
+                            class="inline-block px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700
+                                   hover:from-purple-700 hover:to-purple-800 rounded-lg font-medium
+                                   transition-all duration-300 transform hover:scale-105">
+                        Balans to'ldirish
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="flex flex-wrap justify-center gap-4 animate-fadeInUp">
+            <button onclick="window.location.href=''
+                    class="action-btn px-8 py-4 bg-gradient-to-r from-emerald-600 to-emerald-700
+                           hover:from-emerald-700 hover:to-emerald-800 rounded-xl font-medium
+                           text-white shadow-lg flex items-center gap-3">
+                <i class="fas fa-plus-circle"></i>
+                Balans to'ldirish
+            </button>
+
+            <button onclick="window.location.href=''
+                    class="action-btn px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-900
+                           hover:from-slate-700 hover:to-slate-800 border border-slate-700/50
+                           rounded-xl font-medium text-slate-300 hover:text-white shadow-lg
+                           flex items-center gap-3">
+                <i class="fas fa-history"></i>
+                To'lovlar tarixi
+            </button>
+
+            <button onclick="window.location.href=''
+                    class="action-btn px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700
+                           hover:from-blue-700 hover:to-blue-800 rounded-xl font-medium
+                           text-white shadow-lg flex items-center gap-3">
+                <i class="fas fa-cog"></i>
+                Sozlamalar
+            </button>
+
+            <a href="{% url 'logout' %}"
+               class="action-btn px-8 py-4 bg-gradient-to-r from-red-600 to-red-700
+                      hover:from-red-700 hover:to-red-800 rounded-xl font-medium
+                      text-white shadow-lg flex items-center gap-3">
+                <i class="fas fa-sign-out-alt"></i>
+                Profildan chiqish
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+// Darsni baholash funksiyasi
+function reviewLesson(lessonId) {
+    const rating = prompt('Darsni 1 dan 5 gacha baholang:');
+    if (rating && rating >= 1 && rating <= 5) {
+        fetch(`/api/rate-lesson/${lessonId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ rating: rating })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Baho muvaffaqiyatli saqlandi!', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showNotification('Xatolik yuz berdi!', 'error');
+            }
+        });
+    }
+}
+
+// Bildirishnoma funksiyasi
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-6 right-6 z-50 px-6 py-4 rounded-xl font-medium shadow-lg animate-slideInRight
+                             ${type === 'success' ? 'bg-gradient-to-r from-green-500 to-green-600' :
+                             type === 'error' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                             'bg-gradient-to-r from-blue-500 to-blue-600'}`;
+    notification.innerHTML = `
+        <div class="flex items-center gap-3 text-white">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(30px)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Scroll effektlari
+const scrollContainers = document.querySelectorAll('.lessons-scroll-container');
+scrollContainers.forEach(container => {
+    container.addEventListener('scroll', function() {
+        const cards = this.querySelectorAll('.group');
+        cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                card.style.transform = 'translateX(0)';
+            }
+        });
+    });
+});
+
+// Sayt yuklanganda
+document.addEventListener('DOMContentLoaded', function() {
+    // Progress doiralarini animatsiya qilish
+    document.querySelectorAll('.progress-ring-fill').forEach(circle => {
+        const circleLength = circle.getTotalLength();
+        circle.style.strokeDasharray = circleLength;
+        circle.style.strokeDashoffset = circleLength;
+
+        setTimeout(() => {
+            const offset = circle.getAttribute('stroke-dashoffset');
+            circle.style.strokeDashoffset = offset;
+        }, 500);
+    });
+
+    // Stat kartalari animatsiyasi
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.display = 'block';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

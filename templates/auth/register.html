@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan o'tish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .alert {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message-item {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .progress-bar {
+            animation: shrink 5s linear forwards;
+        }
+
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Parol kuchini ko'rsatish uchun */
+        .password-strength-bar {
+            transition: all 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700">
+        <!-- Xabarlarni ko'rsatish uchun konteyner -->
+        <div id="message-container" class="mb-6 space-y-3">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="message-item alert p-4 rounded-xl border-l-4
+                    {% if message.tags == 'success' %}
+                        bg-emerald-900/30 border-emerald-500 text-emerald-300
+                    {% elif message.tags == 'error' %}
+                        bg-rose-900/30 border-rose-500 text-rose-300
+                    {% elif message.tags == 'warning' %}
+                        bg-amber-900/30 border-amber-500 text-amber-300
+                    {% else %}
+                        bg-blue-900/30 border-blue-500 text-blue-300
+                    {% endif %}">
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle text-rose-500"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle text-blue-500"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium">{{ message }}</p>
+                        </div>
+                        <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                class="ml-2 text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="progress-bar h-full
+                            {% if message.tags == 'success' %}
+                                bg-emerald-500
+                            {% elif message.tags == 'error' %}
+                                bg-rose-500
+                            {% elif message.tags == 'warning' %}
+                                bg-amber-500
+                            {% else %}
+                                bg-blue-500
+                            {% endif %}">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Logo va sarlavha -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
+                <i class="fas fa-user-plus text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Ro'yxatdan o'tish
+            </h2>
+            <p class="text-gray-400 mt-2">Hisob yaratish uchun ma'lumotlarni kiriting</p>
+        </div>
+
+        <!-- Ro'yxatdan o'tish formasi -->
+        <form method="POST" class="space-y-5" id="registerForm">
+            {% csrf_token %}
+
+            <!-- To'liq ism -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">
+                    <i class="fas fa-user mr-2"></i> To'liq ismingiz
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-gray-500"></i>
+                    </div>
+                    <input type="text" name="full_name" placeholder="Ism Familiya" required
+                           class="w-full pl-10 p-3.5 rounded-xl bg-gray-700/70 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                                  transition duration-200 placeholder-gray-400"
+                           id="fullName">
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">
+                    <i class="fas fa-envelope mr-2"></i> Elektron pochta
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-gray-500"></i>
+                    </div>
+                    <input type="email" name="email" placeholder="email@misol.uz" required
+                           class="w-full pl-10 p-3.5 rounded-xl bg-gray-700/70 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                                  transition duration-200 placeholder-gray-400"
+                           id="email">
+                </div>
+                <p class="text-xs text-gray-400">OTP tasdiqlash uchun haqiqiy email kiriting</p>
+            </div>
+
+            <!-- Parol -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">
+                    <i class="fas fa-lock mr-2"></i> Parol
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
+                    <input type="password" name="password" placeholder="••••••••" required
+                           class="w-full pl-10 p-3.5 rounded-xl bg-gray-700/70 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                                  transition duration-200 placeholder-gray-400"
+                           id="password"
+                           oninput="checkPasswordStrength()">
+                    <button type="button" onclick="togglePassword('password')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fas fa-eye text-gray-500 hover:text-gray-300 transition-colors"></i>
+                    </button>
+                </div>
+
+                <!-- Parol kuchini ko'rsatish -->
+                <div class="mt-2">
+                    <div class="flex justify-between mb-1">
+                        <span class="strength-text text-gray-400" id="strengthText">Parol kuchi</span>
+                        <span class="strength-text text-gray-400" id="strengthPercent">0%</span>
+                    </div>
+                    <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="password-strength-bar h-full rounded-full w-0 bg-gray-500" id="strengthBar"></div>
+                    </div>
+                    <div class="mt-2 grid grid-cols-2 gap-1 text-xs text-gray-400">
+                        <div id="lengthCheck" class="flex items-center">
+                            <i class="fas fa-times mr-1 text-rose-500"></i> Kamida 8 belgi
+                        </div>
+                        <div id="uppercaseCheck" class="flex items-center">
+                            <i class="fas fa-times mr-1 text-rose-500"></i> Katta harf
+                        </div>
+                        <div id="lowercaseCheck" class="flex items-center">
+                            <i class="fas fa-times mr-1 text-rose-500"></i> Kichik harf
+                        </div>
+                        <div id="numberCheck" class="flex items-center">
+                            <i class="fas fa-times mr-1 text-rose-500"></i> Raqam
+                        </div>
+                        <div id="specialCheck" class="flex items-center">
+                            <i class="fas fa-times mr-1 text-rose-500"></i> Maxsus belgi
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parolni tasdiqlash -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">
+                    <i class="fas fa-lock mr-2"></i> Parolni tasdiqlang
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
+                    <input type="password" name="password2" placeholder="••••••••" required
+                           class="w-full pl-10 p-3.5 rounded-xl bg-gray-700/70 border border-gray-600
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                                  transition duration-200 placeholder-gray-400"
+                           id="password2"
+                           oninput="checkPasswordMatch()">
+                    <button type="button" onclick="togglePassword('password2')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fas fa-eye text-gray-500 hover:text-gray-300 transition-colors"></i>
+                    </button>
+                </div>
+                <div class="flex items-center mt-2" id="passwordMatch">
+                    <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                    <span class="text-sm text-gray-400">Parollar mos kelishini tekshiring</span>
+                </div>
+            </div>
+
+            <!-- Shartlar va qoidalar -->
+            <div class="flex items-start">
+                <input type="checkbox" id="terms" name="terms" required
+                       class="h-5 w-5 mt-0.5 rounded bg-gray-700 border-gray-600 focus:ring-2 focus:ring-indigo-500">
+                <label for="terms" class="ml-2 text-sm text-gray-300">
+                    Men <a href="#" class="text-indigo-400 hover:text-indigo-300 hover:underline">foydalanish shartlari</a> va
+                    <a href="#" class="text-indigo-400 hover:text-indigo-300 hover:underline">maxfiylik siyosati</a> bilan tanishdim va roziman
+                </label>
+            </div>
+
+            <!-- Ro'yxatdan o'tish tugmasi -->
+            <button type="submit"
+                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700
+                           p-3.5 rounded-xl font-bold text-lg transition duration-300 transform hover:-translate-y-0.5
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800
+                           shadow-lg hover:shadow-xl"
+                    id="submitBtn">
+                <i class="fas fa-user-plus mr-2"></i> Ro'yxatdan o'tish
+            </button>
+        </form>
+
+        <!-- Kirish havolasi -->
+        <div class="mt-8 pt-6 border-t border-gray-700">
+            <p class="text-gray-400 text-center">
+                Sizda hisob bormi?
+                <a href="{% url 'login' %}"
+                   class="text-indigo-400 hover:text-indigo-300 hover:underline font-medium ml-1">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Tizimga kirish
+                </a>
+            </p>
+        </div>
+
+        <!-- Demo ma'lumotlar -->
+        <div class="mt-6 p-4 bg-gray-900/50 rounded-xl border border-gray-700">
+            <p class="text-sm text-gray-400 text-center">
+                <i class="fas fa-lightbulb mr-1"></i>
+                Ro'yxatdan o'tgandan so'ng emailingizga OTP kodi yuboriladi
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parolni ko'rsatish/yashirish
+            window.togglePassword = function(inputId) {
+                const input = document.getElementById(inputId);
+                const icon = input.nextElementSibling.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            };
+
+            // Parol kuchini tekshirish
+            window.checkPasswordStrength = function() {
+                const password = document.getElementById('password').value;
+                const strengthBar = document.getElementById('strengthBar');
+                const strengthText = document.getElementById('strengthText');
+                const strengthPercent = document.getElementById('strengthPercent');
+
+                // Tekshirish mezonlari
+                const checks = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /[0-9]/.test(password),
+                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                };
+
+                // Har bir mezon uchun ikonkani yangilash
+                document.getElementById('lengthCheck').innerHTML =
+                    `<i class="fas fa-${checks.length ? 'check' : 'times'} mr-1 ${checks.length ? 'text-emerald-500' : 'text-rose-500'}"></i> Kamida 8 belgi`;
+
+                document.getElementById('uppercaseCheck').innerHTML =
+                    `<i class="fas fa-${checks.uppercase ? 'check' : 'times'} mr-1 ${checks.uppercase ? 'text-emerald-500' : 'text-rose-500'}"></i> Katta harf`;
+
+                document.getElementById('lowercaseCheck').innerHTML =
+                    `<i class="fas fa-${checks.lowercase ? 'check' : 'times'} mr-1 ${checks.lowercase ? 'text-emerald-500' : 'text-rose-500'}"></i> Kichik harf`;
+
+                document.getElementById('numberCheck').innerHTML =
+                    `<i class="fas fa-${checks.number ? 'check' : 'times'} mr-1 ${checks.number ? 'text-emerald-500' : 'text-rose-500'}"></i> Raqam`;
+
+                document.getElementById('specialCheck').innerHTML =
+                    `<i class="fas fa-${checks.special ? 'check' : 'times'} mr-1 ${checks.special ? 'text-emerald-500' : 'text-rose-500'}"></i> Maxsus belgi`;
+
+                // Qancha mezon bajarilganligini hisoblash
+                const score = Object.values(checks).filter(Boolean).length;
+                const percent = (score / 5) * 100;
+
+                // Progress bar va matnlarni yangilash
+                strengthBar.style.width = percent + '%';
+                strengthPercent.textContent = percent + '%';
+
+                // Rangi va matnini o'zgartirish
+                if (percent < 40) {
+                    strengthBar.className = 'password-strength-bar h-full rounded-full bg-rose-500';
+                    strengthText.textContent = 'Zaif parol';
+                    strengthText.className = 'strength-text text-rose-400';
+                } else if (percent < 70) {
+                    strengthBar.className = 'password-strength-bar h-full rounded-full bg-amber-500';
+                    strengthText.textContent = 'Oʻrtacha parol';
+                    strengthText.className = 'strength-text text-amber-400';
+                } else {
+                    strengthBar.className = 'password-strength-bar h-full rounded-full bg-emerald-500';
+                    strengthText.textContent = 'Kuchli parol';
+                    strengthText.className = 'strength-text text-emerald-400';
+                }
+
+                // Parolni tasdiqlashni tekshirish
+                checkPasswordMatch();
+            };
+
+            // Parol mosligini tekshirish
+            window.checkPasswordMatch = function() {
+                const password = document.getElementById('password').value;
+                const password2 = document.getElementById('password2').value;
+                const matchDiv = document.getElementById('passwordMatch');
+
+                if (password2 === '') {
+                    matchDiv.innerHTML = `
+                        <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                        <span class="text-sm text-gray-400">Parollar mos kelishini tekshiring</span>
+                    `;
+                    return;
+                }
+
+                if (password === password2) {
+                    matchDiv.innerHTML = `
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>
+                        <span class="text-sm text-emerald-400">Parollar mos keladi</span>
+                    `;
+                } else {
+                    matchDiv.innerHTML = `
+                        <i class="fas fa-times-circle text-rose-500 mr-2"></i>
+                        <span class="text-sm text-rose-400">Parollar mos kelmaydi</span>
+                    `;
+                }
+            };
+
+            // Formani yuborish
+            const registerForm = document.getElementById('registerForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            registerForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('password').value;
+                const password2 = document.getElementById('password2').value;
+
+                // Parol mosligini tekshirish
+                if (password !== password2) {
+                    e.preventDefault();
+                    showMessage('error', 'Parollar mos kelmaydi!');
+                    return;
+                }
+
+                // Parol uzunligini tekshirish
+                if (password.length < 8) {
+                    e.preventDefault();
+                    showMessage('error', 'Parol kamida 8 belgidan iborat bo\'lishi kerak!');
+                    return;
+                }
+
+                // Shartlarni tekshirish
+                const terms = document.getElementById('terms');
+                if (!terms.checked) {
+                    e.preventDefault();
+                    showMessage('error', 'Foydalanish shartlariga rozilik bildirishingiz kerak!');
+                    return;
+                }
+
+                // Yuklanish animatsiyasi
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Hisob yaratilmoqda...';
+                submitBtn.classList.remove('hover:-translate-y-0.5');
+                submitBtn.classList.add('opacity-75');
+            });
+
+            // Xabarlarni avtomatik o'chirish
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    message.style.transition = 'opacity 0.3s, transform 0.3s';
+
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            });
+
+            // Yangi xabarlarni ko'rsatish funksiyasi
+            window.showMessage = function(type, text) {
+                const container = document.getElementById('message-container');
+
+                const messageTypes = {
+                    'success': {
+                        class: 'bg-emerald-900/30 border-emerald-500 text-emerald-300',
+                        icon: 'check-circle text-emerald-500'
+                    },
+                    'error': {
+                        class: 'bg-rose-900/30 border-rose-500 text-rose-300',
+                        icon: 'exclamation-circle text-rose-500'
+                    },
+                    'warning': {
+                        class: 'bg-amber-900/30 border-amber-500 text-amber-300',
+                        icon: 'exclamation-triangle text-amber-500'
+                    },
+                    'info': {
+                        class: 'bg-blue-900/30 border-blue-500 text-blue-300',
+                        icon: 'info-circle text-blue-500'
+                    }
+                };
+
+                const messageType = messageTypes[type] || messageTypes['info'];
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message-item alert p-4 rounded-xl border-l-4 ${messageType.class}`;
+                messageDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                            <i class="fas ${messageType.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium">${text}</p>
+                        </div>
+                        <button type="button" onclick="this.parentElement.parentElement.remove()"
+                                class="ml-2 text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="progress-bar h-full ${type === 'success' ? 'bg-emerald-500' :
+                            type === 'error' ? 'bg-rose-500' :
+                            type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'}">
+                        </div>
+                    </div>
+                `;
+
+                container.prepend(messageDiv);
+
+                // Yangi xabarni ham avtomatik o'chirish
+                setTimeout(() => {
+                    messageDiv.style.opacity = '0';
+                    messageDiv.style.transform = 'translateY(-10px)';
+                    messageDiv.style.transition = 'opacity 0.3s, transform 0.3s';
+
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            };
+
+            // Inputlarga fokus bo'lganda labelni ko'tarish effekti
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('ring-2', 'ring-indigo-500');
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('ring-2', 'ring-indigo-500');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
